@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>南米60日ライフデザイン | 金原家</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root{
+    --bg:#0e1116; --card:#161b23; --card2:#1b2230; --ink:#f5f0e8; --muted:#a8a29a;
+    --green:#34d399; --amber:#f59e0b; --blue:#60a5fa; --gray:#94a3b8; --line:rgba(255,255,255,.1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 18px 80px}
+  header{text-align:center;padding:34px 0 8px}
+  header .kicker{font-size:12px;letter-spacing:.35em;color:var(--green);font-weight:700}
+  header h1{font-size:30px;letter-spacing:.06em;margin:10px 0 6px}
+  header p{color:var(--muted);font-size:14px}
+  .badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  .badge{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 14px;font-size:12px;color:var(--muted)}
+  .badge b{color:var(--ink)}
+  section{margin-top:44px}
+  h2{font-size:19px;letter-spacing:.05em;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  h2 .no{background:var(--green);color:#06281c;width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+  .mapbox{height:440px;border-radius:16px;overflow:hidden;border:1px solid var(--line);position:relative;background:#0e1116}
+  .mapbox + .mapbox{margin-top:16px}
+  .map-cap{font-size:12px;color:var(--muted);margin-top:8px}
+  .grid{display:grid;gap:12px}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .card h3{font-size:15px;margin-bottom:6px}
+  .card p{font-size:13px;color:var(--muted)}
+  .card .big{font-size:15px;color:var(--ink);font-weight:700}
+  .tag{display:inline-block;font-size:11px;border-radius:999px;padding:2px 10px;margin:2px 4px 2px 0}
+  .t-green{background:rgba(52,211,153,.15);color:var(--green)}
+  .t-amber{background:rgba(245,158,11,.15);color:var(--amber)}
+  .t-blue{background:rgba(96,165,250,.15);color:var(--blue)}
+  .t-gray{background:rgba(148,163,184,.15);color:var(--gray)}
+  .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+  .photo{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+  .photo img{width:100%;height:150px;object-fit:cover;display:block}
+  .photo .cap{padding:10px 12px;font-size:12px;color:var(--muted)}
+  .photo .cap b{display:block;color:var(--ink);font-size:13px}
+  .timeline{border-left:2px solid var(--green);margin-left:8px;padding-left:20px;display:flex;flex-direction:column;gap:18px}
+  .tl-item{position:relative}
+  .tl-item::before{content:"";position:absolute;left:-27px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid var(--bg)}
+  .tl-item h3{font-size:15px}
+  .tl-item .meta{font-size:12px;color:var(--muted)}
+  .log{border-left:3px solid var(--amber);padding-left:14px;margin:10px 0}
+  .log .d{font-size:11px;color:var(--amber);font-weight:700}
+  .log p{font-size:13px;color:var(--ink)}
+  .kpi{display:flex;gap:12px;flex-wrap:wrap}
+  .kpi .card{flex:1;min-width:200px;text-align:center}
+  .kpi .num{font-size:28px;font-weight:800;color:var(--green)}
+  .goalbox{background:linear-gradient(135deg,rgba(52,211,153,.12),rgba(245,158,11,.10));border:1px solid rgba(52,211,153,.35);border-radius:16px;padding:20px}
+  .goalbox .q{font-size:15px;font-weight:700;margin-bottom:6px}
+  .goalbox p{font-size:13px;color:var(--muted)}
+  footer{margin-top:56px;text-align:center;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px}
+  .num-marker{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.6);background:#10b981}
+  .home-marker{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(15,17,21,.85);border:2px solid #f5f0e8}
+  .hint-marker{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0f1115;background:#fbbf24;border:2px solid #fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">60 DAYS SOUTH AMERICA</div>
+  <h1>南米60日 ライフデザイン</h1>
+  <p>家族4人で「暮らす」60日間 ｜ 2026.12.16 — 2027.2.18</p>
+  <div class="badges">
+    <span class="badge">👨‍👩‍👧‍👦 夫・妻・6歳・1歳</span>
+    <span class="badge">✈️ 世界一周券・東回り</span>
+    <span class="badge">📍 5拠点 × 長期滞在</span>
+    <span class="badge">💚 案B「陽の国ルート」93点</span>
+  </div>
+</header>
+
+<section>
+  <h2><span class="no">1</span> 世界一周ルート</h2>
+  <div class="mapbox" id="mapWorld"></div>
+  <p class="map-cap">実線=南米内の移動 ／ 点線=RTW長距離フライト ／ 数字=滞在順。点をクリックで詳細。</p>
+  <div class="mapbox" id="mapSA"></div>
+  <p class="map-cap">南米クローズアップ。①リオ21日 → ②BA14日 → ③モンテビデオ7日 → ④プンタ7日 → ⑤ウシュアイア11日</p>
+</section>
+
+<section>
+  <h2><span class="no">2</span> 60日間の旅程</h2>
+  <div class="timeline">
+    <div class="tl-item"><h3>🇯🇵 東京 出発</h3><div class="meta">12/16 ｜ RTW開始（北米経由・東回り）</div></div>
+    <div class="tl-item"><h3>① リオデジャネイロ <span class="tag t-green">21日</span></h3><div class="meta">12/18-1/8 ｜ 海辺生活・世界一美しい都市 ｜ 宿:レメ/イパネマ候補</div></div>
+    <div class="tl-item"><h3>② ブエノスアイレス <span class="tag t-green">14日</span></h3><div class="meta">1/8-1/22 ｜ 牛肉とワイン・タンゴ ｜ フライト2h40</div></div>
+    <div class="tl-item"><h3>③ モンテビデオ <span class="tag t-green">7日</span></h3><div class="meta">1/22-1/29 ｜ 静かな首都 ｜ フェリー2.5h</div></div>
+    <div class="tl-item"><h3>④ プンタ・デル・エステ <span class="tag t-green">7日</span></h3><div class="meta">1/29-2/5 ｜ 家族のビーチ生活 ｜ 車1.5h</div></div>
+    <div class="tl-item"><h3>⑤ ウシュアイア <span class="tag t-green">11日</span></h3><div class="meta">2/5-2/16 ｜ 南極の入り口・ペンギン島・チョコレート工房</div></div>
+    <div class="tl-item"><h3>🛬 欧州経由 → 東京 帰国</h3><div class="meta">2/16-2/18 ｜ マドリード/パリに1-2泊（時差ボケ回復・要確認）→ ぐるっと一周</div></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">3</span> 見る景色・食べるもの</h2>
+  <div class="photos">
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Cidade_Maravilhosa.jpg/800px-Cidade_Maravilhosa.jpg" alt="リオ"><div class="cap"><b>リオデジャネイロ</b>世界一美しい都市の海辺生活</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/P%C3%A3o_de_A%C3%A7ucar_-_Sugarloaf_Mountain_-_Zuckerhut_-_2022.jpg/800px-P%C3%A3o_de_A%C3%A7ucar_-_Sugarloaf_Mountain_-_Zuckerhut_-_2022.jpg" alt="シュガーローフ"><div class="cap"><b>シュガーローフ</b>家族でロープウェイ絶景</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Puerto_Madero%2C_Buenos_Aires_%2840689219792%29_%28cropped%29.jpg/800px-Puerto_Madero%2C_Buenos_Aires_%2840689219792%29_%28cropped%29.jpg" alt="ブエノスアイレス"><div class="cap"><b>ブエノスアイレス</b>世界一の牛肉とワイン</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/PALACIO_LEGISLATIVO_01.JPG/800px-PALACIO_LEGISLATIVO_01.JPG" alt="モンテビデオ"><div class="cap"><b>モンテビデオ</b>静かな首都・チビト</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/%D0%9F%D1%83%D0%BD%D1%82%D0%B0-%D0%B4%D0%B5%D0%BB%D1%8C-%D0%AD%D1%81%D1%82%D0%B5.jpg/800px-%D0%9F%D1%83%D0%BD%D1%82%D0%B0-%D0%B4%D0%B5%D0%BB%D1%8C-%D0%AD%D1%81%D1%82%D0%B5.jpg" alt="プンタ・デル・エステ"><div class="cap"><b>プンタ・デル・エステ</b>家族のビーチ生活</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Ushuaia_aerial_panorama.jpg/800px-Ushuaia_aerial_panorama.jpg" alt="ウシュアイア"><div class="cap"><b>ウシュアイア</b>地球の果て・南極の入り口</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Magellanic_penguin%2C_Valdes_Peninsula%2C_e.jpg/960px-Magellanic_penguin%2C_Valdes_Peninsula%2C_e.jpg" alt="ペンギン"><div class="cap"><b>マゼランペンギン</b>ウシュアイアのペンギン島</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Pao_de_queijo_brasil.jpg/960px-Pao_de_queijo_brasil.jpg" alt="パン・デ・ケイジョ"><div class="cap"><b>パン・デ・ケイジョ</b>毎朝の焼きたてチーズパン</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Churrasco_Campeiro.jpg/960px-Churrasco_Campeiro.jpg" alt="シュラスコ"><div class="cap"><b>シュラスコ</b>人生で一度は、ブラジル式焼肉</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/DulceDeLeche.jpg/960px-DulceDeLeche.jpg" alt="ドゥルセ・デ・レチェ"><div class="cap"><b>ドゥルセ・デ・レチェ</b>アルゼンチンの甘い記憶</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Tango_Porte%C3%B1o.jpg/960px-Tango_Porte%C3%B1o.jpg" alt="タンゴ"><div class="cap"><b>タンゴ</b>BAの夜・夫婦の時間</div></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">4</span> リオの住みたい家（候補）</h2>
+  <div class="grid g3">
+    <div class="card"><h3>① レメ ⭐おすすめ</h3><p class="big">1泊1.5〜2.5万円目安</p><p>静か×安全×海まで2分。アルポドールの夕日まで徒歩10分。<span class="tag t-green">要確認</span></p></div>
+    <div class="card"><h3>② イパネマ</h3><p class="big">1泊1.8〜2.8万円目安</p><p>最も「住みたい」エリア。日曜の路上市場フェイラ・ヒッピー徒歩圏。<span class="tag t-green">要確認</span></p></div>
+    <div class="card"><h3>③ レブロン</h3><p class="big">1泊2〜3万円目安</p><p>高級・静か。スーパー・子連れレストラン充実。<span class="tag t-green">要確認</span></p></div>
+    <div class="card"><h3>④ ウルカ</h3><p class="big">1泊1.3〜2.2万円目安</p><p>波なしベイビーチ=1歳児に最適。フラメンゴ公園・シュガーローフ徒歩圏。<span class="tag t-green">要確認</span></p></div>
+    <div class="card"><h3>⑤ コパカバーナ</h3><p class="big">1泊1〜1.8万円目安</p><p>にぎやかだがコスパ◎。老舗パン屋あり。<span class="tag t-green">要確認</span></p></div>
+    <div class="card"><h3>📌 価格の見方</h3><p>2026/8/28時点の相場目安。Booking.comで実価格を確認中（大人2・子2・12/18-1/8）。</p></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">5</span> リオで絶対行きたい3つ</h2>
+  <div class="grid g3">
+    <div class="card"><h3>🌊 日常の幸福</h3><p>レメ→アルポドールの海沿い遊歩道。毎日ここで「住んでる」気分。</p></div>
+    <div class="card"><h3>🚠 特別な旅の記憶</h3><p>シュガーローフのロープウェイ。家族で絶景、6歳も大喜び間違いなし。</p></div>
+    <div class="card"><h3>🏰 家族で遠出</h3><p>ペトロポリス（車1h）。皇帝の夏の宮殿+チョコレート工房。</p></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">6</span> 最近の決定</h2>
+  <div class="card">
+    <div class="log"><div class="d">2026/8/28</div><p>ルートは<b>案B「陽の国」93点</b>に決定（ビーチ=子どもの幸福最大化・食が世界最高水準・南極の入り口）。</p></div>
+    <div class="log"><div class="d">2026/8/28</div><p>世界一周券は<b>東回りでぐるっと一周</b>（東京→北米→南米→欧州→東京）。帰路の欧州1-2泊は時差ボケ回復案。</p></div>
+    <div class="log"><div class="d">2026/8/28</div><p>最初の都市=<b>リオ</b>。宿ハンター開始（レメ/イパネマ/レブロン/ウルカ/コパカバーナ）。</p></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">7</span> ビジネスと旅の接続</h2>
+  <div class="kpi">
+    <div class="card"><div class="num">500万</div><p>2026年12月までに作る粗利</p></div>
+    <div class="card"><div class="num">3.5ヶ月</div><p>残り期間（今日から）</p></div>
+    <div class="card"><div class="num">60日</div><p>その先にある家族の南米生活</p></div>
+  </div>
+  <div class="goalbox" style="margin-top:14px">
+    <div class="q">「この60日間を実現するために、今日ビジネスで何を一つ進めますか？」</div>
+    <p>旅行は「いつか」ではなく「予定」になった。残るは今日の1アクションの積み重ねだけ。</p>
+  </div>
+</section>
+
+<footer>
+  金原家 南米60日ライフデザイン ｜ 更新: 2026/8/28 ｜ 各セッション後に更新されます
+</footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const tiles = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {attribution:'Esri', maxZoom:12});
+const labels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {attribution:'Esri', maxZoom:12});
+
+// --- 世界一周マップ ---
+const mw = L.map('mapWorld', {zoomControl:true}).setView([12,-30],2);
+tiles.addTo(mw); labels.addTo(mw);
+const L1 = {color:'#94a3b8', weight:3, opacity:0.85, dashArray:'6 10'};
+L.polyline([[35.6762,139.6503],[34.9896,180]], L1).addTo(mw);
+L.polyline([[34.9896,-180],[33.9416,-118.4085],[-22.9068,-43.1729]], L1).addTo(mw);
+L.polyline([[-22.9068,-43.1729],[-34.6037,-58.3816],[-34.9011,-56.1645],[-34.9496,-54.9478],[-54.8019,-68.3030]], {color:'#34d399', weight:4, opacity:0.95}).addTo(mw);
+L.polyline([[-54.8019,-68.3030],[-34.6037,-58.3816]], L1).addTo(mw);
+L.polyline([[-34.6037,-58.3816],[40.4168,-3.7038]], L1).addTo(mw);
+L.polyline([[40.4168,-3.7038],[35.6762,139.6503]], L1).addTo(mw);
+const stays = [
+  {n:1,name:'リオデジャネイロ',days:'21日',pos:[-22.9068,-43.1729],note:'海辺生活・世界一美しい都市'},
+  {n:2,name:'ブエノスアイレス',days:'14日',pos:[-34.6037,-58.3816],note:'牛肉とワイン・タンゴ'},
+  {n:3,name:'モンテビデオ',days:'7日',pos:[-34.9011,-56.1645],note:'静かな首都・チビト'},
+  {n:4,name:'プンタ・デル・エステ',days:'7日',pos:[-34.9496,-54.9478],note:'家族のビーチ生活'},
+  {n:5,name:'ウシュアイア',days:'11日',pos:[-54.8019,-68.3030],note:'南極の入り口・ペンギン'}
+];
+stays.forEach(s=>{
+  const ic = L.divIcon({className:'', html:`<div class="num-marker">${s.n}</div>`, iconSize:[26,26], iconAnchor:[13,13]});
+  L.marker(s.pos,{icon:ic}).addTo(mw).bindPopup(`<b>${s.name}</b><br>滞在 ${s.days}<br>${s.note}`);
+});
+const hi = L.divIcon({className:'', html:'<div class="home-marker">🇯🇵</div>', iconSize:[34,34], iconAnchor:[17,17]});
+L.marker([35.6762,139.6503],{icon:hi}).addTo(mw).bindPopup('<b>東京</b><br>12/16出国 → 2/18帰国');
+const hii = L.divIcon({className:'', html:'<div class="hint-marker">✈</div>', iconSize:[22,22], iconAnchor:[11,11]});
+L.marker([33.9416,-118.4085],{icon:hii}).addTo(mw).bindPopup('経由: LAX(サンプル)');
+L.marker([40.4168,-3.7038],{icon:hii}).addTo(mw).bindPopup('帰路オプション: 欧州1-2泊(要確認)');
+
+// --- 南米クローズアップ ---
+const ms = L.map('mapSA', {zoomControl:true}).setView([-25,-60],4);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {attribution:'Esri', maxZoom:14}).addTo(ms);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {attribution:'Esri', maxZoom:14}).addTo(ms);
+L.polyline([[-22.9068,-43.1729],[-34.6037,-58.3816],[-34.9011,-56.1645],[-34.9496,-54.9478],[-54.8019,-68.3030]], {color:'#34d399', weight:5, opacity:0.95}).addTo(ms);
+stays.forEach(s=>{
+  const ic = L.divIcon({className:'', html:`<div class="num-marker">${s.n}</div>`, iconSize:[30,30], iconAnchor:[15,15]});
+  L.marker(s.pos,{icon:ic}).addTo(ms).bindPopup(`<b>${s.name}</b><br>滞在 ${s.days}<br>${s.note}`);
+});
+ms.fitBounds([[-56,-76],[4,-33]], {padding:[20,20]});
+</script>
+</body>
+</html>
