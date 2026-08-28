@@ -8,13 +8,13 @@
 <style>
   :root{
     --bg:#0e1116; --card:#161b23; --card2:#1b2230; --ink:#f5f0e8; --muted:#a8a29a;
-    --green:#34d399; --amber:#f59e0b; --blue:#60a5fa; --gray:#94a3b8; --line:rgba(255,255,255,.1);
+    --green:#34d399; --amber:#f59e0b; --blue:#60a5fa; --pink:#f472b6; --gray:#94a3b8; --line:rgba(255,255,255,.1);
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
   .wrap{max-width:1080px;margin:0 auto;padding:24px 18px 80px}
   header{text-align:center;padding:34px 0 8px}
-  header .kicker{font-size:12px;letter-spacing:.35em;color:var(--green);font-weight:700}
+  header .kicker{font-size:12px;letter-spacing:.35em;color:var(--pink);font-weight:700}
   header h1{font-size:30px;letter-spacing:.06em;margin:10px 0 6px}
   header p{color:var(--muted);font-size:14px}
   .badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
@@ -36,6 +36,7 @@
   .tag{display:inline-block;font-size:11px;border-radius:999px;padding:2px 10px;margin:2px 4px 2px 0}
   .t-green{background:rgba(52,211,153,.15);color:var(--green)}
   .t-amber{background:rgba(245,158,11,.15);color:var(--amber)}
+  .t-pink{background:rgba(244,114,182,.15);color:var(--pink)}
   .t-blue{background:rgba(96,165,250,.15);color:var(--blue)}
   .t-gray{background:rgba(148,163,184,.15);color:var(--gray)}
   .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
@@ -46,12 +47,18 @@
   .timeline{border-left:2px solid var(--green);margin-left:8px;padding-left:20px;display:flex;flex-direction:column;gap:18px}
   .tl-item{position:relative}
   .tl-item::before{content:"";position:absolute;left:-27px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid var(--bg)}
+  .tl-item.wish::before{background:var(--pink)}
   .tl-item.conf::before{background:var(--amber)}
   .tl-item h3{font-size:15px}
   .tl-item .meta{font-size:12px;color:var(--muted)}
-  .log{border-left:3px solid var(--amber);padding-left:14px;margin:10px 0}
-  .log .d{font-size:11px;color:var(--amber);font-weight:700}
+  .log{border-left:3px solid var(--pink);padding-left:14px;margin:10px 0}
+  .log .d{font-size:11px;color:var(--pink);font-weight:700}
   .log p{font-size:13px;color:var(--ink)}
+  .wishlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+  .wish{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+  .wish .emoji{font-size:26px}
+  .wish .name{font-weight:700;font-size:14px;margin:4px 0}
+  .wish .st{font-size:12px}
   .kpi{display:flex;gap:12px;flex-wrap:wrap}
   .kpi .card{flex:1;min-width:200px;text-align:center}
   .kpi .num{font-size:28px;font-weight:800;color:var(--green)}
@@ -61,6 +68,7 @@
   footer{margin-top:56px;text-align:center;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px}
   .num-marker{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.6);background:#10b981}
   .num-marker.gold{background:#f59e0b}
+  .num-marker.pink{background:#f472b6}
   .home-marker{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(15,17,21,.85);border:2px solid #f5f0e8}
   .hint-marker{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0f1115;background:#fbbf24;border:2px solid #fff}
 </style>
@@ -71,12 +79,13 @@
 <header>
   <div class="kicker">60 DAYS SOUTH AMERICA</div>
   <h1>南米60日 ライフデザイン</h1>
-  <p>家族4人で「暮らす」60日間 ｜ 2026.12.16 — 2027.2.15頃</p>
+  <p>家族4人で「暮らす」旅 ｜ 2026.12.16 — 2027.3月初旬（約75日）</p>
   <div class="badges">
     <span class="badge">👨‍👩‍👧‍👦 夫・妻・6歳・1歳</span>
     <span class="badge">✈️ 世界一周券・東回り</span>
-    <span class="badge">📍 6拠点 × 長期滞在</span>
-    <span class="badge">🎉 1軒目の宿・予約済み</span>
+    <span class="badge">📍 10拠点</span>
+    <span class="badge">💗 奥さんの希望5つ全反映</span>
+    <span class="badge">🎉 1軒目・予約済み</span>
   </div>
 </header>
 
@@ -85,68 +94,74 @@
   <div class="mapbox" id="mapWorld"></div>
   <p class="map-cap">実線=南米内の移動 ／ 点線=RTW長距離フライト ／ 数字=滞在順。点をクリックで詳細。</p>
   <div class="mapbox" id="mapSA"></div>
-  <p class="map-cap">南米クローズアップ。①リオ21日 → ②BA10日 → ③モンテビデオ/プンタ4日(短縮案) → ④エル・カラファテ4日 → ⑤エル・チャルテン5泊🎉確定 → ⑥ウシュアイア11日</p>
+  <p class="map-cap">南米クローズアップ。①リオ→②イグアス→③BA→④ウシュアイア→⑤エル・カラファテ→⑥エル・チャルテン🎉→⑦リマ→⑧クスコ/マチュピチュ→⑨ラパス/ウユニ→⑩メキシコ</p>
 </section>
 
 <section>
-  <h2><span class="no">2</span> 60日間の旅程</h2>
+  <h2><span class="no">2</span> 60日間の旅程（約75日）</h2>
   <div class="timeline">
-    <div class="tl-item"><h3>🇯🇵 東京 出発</h3><div class="meta">12/16 ｜ RTW開始（北米経由・東回り）</div></div>
-    <div class="tl-item"><h3>① リオデジャネイロ <span class="tag t-green">21日</span></h3><div class="meta">12/18-1/8 ｜ 海辺生活・世界一美しい都市 ｜ 宿:レメ/イパネマ候補</div></div>
-    <div class="tl-item"><h3>② ブエノスアイレス <span class="tag t-green">10日</span></h3><div class="meta">1/8-1/18 ｜ 牛肉とワイン・タンゴ ｜ フライト2h40</div></div>
-    <div class="tl-item"><h3>③ モンテビデオ/プンタ・デル・エステ <span class="tag t-blue">4日・短縮案</span></h3><div class="meta">1/18-1/22 ｜ 14日→4日に短縮 or 削除（要判断）</div></div>
-    <div class="tl-item"><h3>④ エル・カラファテ <span class="tag t-green">4日</span></h3><div class="meta">1/22-1/26 ｜ ペリト・モレノ氷河（人生で一度の景色） ｜ フライトBA→FTE 3h</div></div>
-    <div class="tl-item conf"><h3>⑤ エル・チャルテン <span class="tag t-amber">5泊 🎉予約済み</span></h3><div class="meta">1/26-1/31 ｜ フィッツロイ ｜ Airbnb ¥72,555（支払1/18・キャンセル無料1/25 15:00前）</div></div>
-    <div class="tl-item"><h3>⑥ ウシュアイア <span class="tag t-green">11日</span></h3><div class="meta">1/31-2/11 ｜ 南極の入り口・ペンギン島・チョコレート工房</div></div>
-    <div class="tl-item"><h3>🛬 帰路 BA → 欧州経由 → 東京 帰国</h3><div class="meta">2/11-2/15 ｜ マドリード/パリに1-2泊（時差ボケ回復・要確認）→ ぐるっと一周</div></div>
+    <div class="tl-item"><h3>🇯🇵 東京 出発</h3><div class="meta">12/16 ｜ RTW開始（LAX経由・東回り）</div></div>
+    <div class="tl-item"><h3>① リオデジャネイロ <span class="tag t-green">14日</span></h3><div class="meta">12/18-1/1 ｜ 海辺生活（21→14日に調整）</div></div>
+    <div class="tl-item"><h3>② イグアスの滝 <span class="tag t-green">3日</span></h3><div class="meta">1/1-1/4 ｜ 世界三大瀑布・家族で（追加提案）</div></div>
+    <div class="tl-item"><h3>③ ブエノスアイレス <span class="tag t-green">10日</span></h3><div class="meta">1/4-1/14 ｜ 牛肉とワイン・タンゴ</div></div>
+    <div class="tl-item"><h3>④ ウシュアイア <span class="tag t-green">8日</span></h3><div class="meta">1/14-1/22 ｜ 南極の入り口・ペンギン島</div></div>
+    <div class="tl-item wish"><h3>⑤ エル・カラファテ <span class="tag t-pink">4日 ★妻希望</span></h3><div class="meta">1/22-1/26 ｜ ペリト・モレノ氷河（人生で一度の景色）</div></div>
+    <div class="tl-item wish conf"><h3>⑥ エル・チャルテン <span class="tag t-amber">5泊 ★妻希望 🎉予約済み</span></h3><div class="meta">1/26-1/31 ｜ フィッツロイ ｜ Airbnb ¥72,555（支払1/18・キャンセル無料1/25 15:00前）</div></div>
+    <div class="tl-item"><h3>⑦ リマ <span class="tag t-green">4日</span></h3><div class="meta">1/31-2/4 ｜ 世界一の美食・セビーチェ・バランコ</div></div>
+    <div class="tl-item wish"><h3>⑧ クスコ+聖谷+マチュピチュ <span class="tag t-pink">9日 ★妻希望</span></h3><div class="meta">2/4-2/13 ｜ 初日休息→聖谷(2,800m)で順応→マチュピチュ(2,400m)。入場は数ヶ月前予約必須・1歳児は高度対策（水分・休息多め）</div></div>
+    <div class="tl-item wish"><h3>⑨ ラパス+ウユニ塩湖 <span class="tag t-pink">6日 ★妻希望</span></h3><div class="meta">2/13-2/19 ｜ ウユニ(3,650m)=2月は雨季で鏡張りベストシーズン</div></div>
+    <div class="tl-item wish"><h3>⑩ メキシコ <span class="tag t-pink">9日 ★妻希望</span></h3><div class="meta">2/19-2/28 ｜ メキシコシティ+テオティワカン+食の都オアハカ</div></div>
+    <div class="tl-item"><h3>🛬 帰国</h3><div class="meta">3/1頃 ｜ RTW（LAX経由）→ 東京。全72泊・約75日</div></div>
   </div>
 </section>
 
 <section>
-  <h2><span class="no">3</span> 見る景色・食べるもの</h2>
+  <h2><span class="no">3</span> 奥さんの希望リスト</h2>
+  <div class="wishlist">
+    <div class="wish"><div class="emoji">🇲🇽</div><div class="name">メキシコ</div><div class="st"><span class="tag t-green">工程入り ✓</span></div></div>
+    <div class="wish"><div class="emoji">🪞</div><div class="name">ウユニ塩湖</div><div class="st"><span class="tag t-green">工程入り ✓</span></div></div>
+    <div class="wish"><div class="emoji">🏔️</div><div class="name">マチュピチュ</div><div class="st"><span class="tag t-green">工程入り ✓</span></div></div>
+    <div class="wish"><div class="emoji">⛰️</div><div class="name">フィッツロイ</div><div class="st"><span class="tag t-amber">予約済み 🎉</span></div></div>
+    <div class="wish"><div class="emoji">🧊</div><div class="name">モレノ氷河</div><div class="st"><span class="tag t-green">工程入り ✓</span></div></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">4</span> 見る景色・食べるもの</h2>
   <div class="photos">
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Machu_Picchu%2C_2023_%28012%29.jpg/1000px-Machu_Picchu%2C_2023_%28012%29.jpg" alt="マチュピチュ"><div class="cap"><b>マチュピチュ</b>★妻希望・人生で一度の景色</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Salar_Uyuni_au01.jpg/1000px-Salar_Uyuni_au01.jpg" alt="ウユニ塩湖"><div class="cap"><b>ウユニ塩湖</b>★妻希望・2月は鏡張り</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Fitz_Roy_framed_trees_%28colour_balans%29.jpg/1280px-Fitz_Roy_framed_trees_%28colour_balans%29.jpg" alt="フィッツロイ"><div class="cap"><b>フィッツロイ</b>エル・チャルテン・予約済み🎉</div></div>
+    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Perito_Moreno_Glacier_Patagonia_Argentina_Luca_Galuzzi_2005.JPG/1280px-Perito_Moreno_Glacier_Patagonia_Argentina_Luca_Galuzzi_2005.JPG" alt="ペリト・モレノ氷河"><div class="cap"><b>ペリト・モレノ氷河</b>★妻希望・氷が崩れる瞬間</div></div>
     <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Cidade_Maravilhosa.jpg/800px-Cidade_Maravilhosa.jpg" alt="リオ"><div class="cap"><b>リオデジャネイロ</b>世界一美しい都市の海辺生活</div></div>
     <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/P%C3%A3o_de_A%C3%A7ucar_-_Sugarloaf_Mountain_-_Zuckerhut_-_2022.jpg/800px-P%C3%A3o_de_A%C3%A7ucar_-_Sugarloaf_Mountain_-_Zuckerhut_-_2022.jpg" alt="シュガーローフ"><div class="cap"><b>シュガーローフ</b>家族でロープウェイ絶景</div></div>
     <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Puerto_Madero%2C_Buenos_Aires_%2840689219792%29_%28cropped%29.jpg/800px-Puerto_Madero%2C_Buenos_Aires_%2840689219792%29_%28cropped%29.jpg" alt="ブエノスアイレス"><div class="cap"><b>ブエノスアイレス</b>世界一の牛肉とワイン</div></div>
-    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/PALACIO_LEGISLATIVO_01.JPG/800px-PALACIO_LEGISLATIVO_01.JPG" alt="モンテビデオ"><div class="cap"><b>モンテビデオ</b>静かな首都・チビト</div></div>
-    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Perito_Moreno_Glacier_Patagonia_Argentina_Luca_Galuzzi_2005.JPG/1280px-Perito_Moreno_Glacier_Patagonia_Argentina_Luca_Galuzzi_2005.JPG" alt="ペリト・モレノ氷河"><div class="cap"><b>ペリト・モレノ氷河</b>エル・カラファテから車1.5h</div></div>
-    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Fitz_Roy_framed_trees_%28colour_balans%29.jpg/1280px-Fitz_Roy_framed_trees_%28colour_balans%29.jpg" alt="フィッツロイ"><div class="cap"><b>フィッツロイ</b>エル・チャルテン ｜ 予約済み🎉</div></div>
     <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Ushuaia_aerial_panorama.jpg/800px-Ushuaia_aerial_panorama.jpg" alt="ウシュアイア"><div class="cap"><b>ウシュアイア</b>地球の果て・南極の入り口</div></div>
     <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Magellanic_penguin%2C_Valdes_Peninsula%2C_e.jpg/960px-Magellanic_penguin%2C_Valdes_Peninsula%2C_e.jpg" alt="ペンギン"><div class="cap"><b>マゼランペンギン</b>ウシュアイアのペンギン島</div></div>
     <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Pao_de_queijo_brasil.jpg/960px-Pao_de_queijo_brasil.jpg" alt="パン・デ・ケイジョ"><div class="cap"><b>パン・デ・ケイジョ</b>毎朝の焼きたてチーズパン</div></div>
     <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Churrasco_Campeiro.jpg/960px-Churrasco_Campeiro.jpg" alt="シュラスコ"><div class="cap"><b>シュラスコ</b>人生で一度は、ブラジル式焼肉</div></div>
-    <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/DulceDeLeche.jpg/960px-DulceDeLeche.jpg" alt="ドゥルセ・デ・レチェ"><div class="cap"><b>ドゥルセ・デ・レチェ</b>アルゼンチンの甘い記憶</div></div>
     <div class="photo"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Tango_Porte%C3%B1o.jpg/960px-Tango_Porte%C3%B1o.jpg" alt="タンゴ"><div class="cap"><b>タンゴ</b>BAの夜・夫婦の時間</div></div>
   </div>
 </section>
 
 <section>
-  <h2><span class="no">4</span> 住みたい家（候補と1軒の確定）</h2>
+  <h2><span class="no">5</span> 住みたい家（1軒の確定と候補）</h2>
   <div class="grid g3">
     <div class="card confirmed"><h3>🎉 エル・チャルテン Airbnb（確定）</h3><p class="big">¥72,555 / 5泊（1泊約14,500円）</p><p>Río de las Vueltas 135, El Chaltén ｜ 1/26-1/31<br><span class="tag t-amber">支払い 1/18</span><span class="tag t-amber">キャンセル無料 1/25 15:00前</span></p></div>
-    <div class="card"><h3>① リオ・レメ ⭐おすすめ</h3><p class="big">1泊1.5〜2.5万円目安</p><p>静か×安全×海まで2分。アルポドールの夕日まで徒歩10分。<span class="tag t-green">要確認</span></p></div>
-    <div class="card"><h3>② リオ・イパネマ</h3><p class="big">1泊1.8〜2.8万円目安</p><p>最も「住みたい」エリア。日曜の路上市場フェイラ・ヒッピー徒歩圏。<span class="tag t-green">要確認</span></p></div>
-    <div class="card"><h3>③ リオ・ウルカ</h3><p class="big">1泊1.3〜2.2万円目安</p><p>波なしベイビーチ=1歳児に最適。フラメンゴ公園・シュガーローフ徒歩圏。<span class="tag t-green">要確認</span></p></div>
-    <div class="card"><h3>④ リオ・レブロン/コパカバーナ</h3><p class="big">1泊1〜3万円目安</p><p>レブロン=高級・静か。コパカバーナ=コスパ◎。<span class="tag t-green">要確認</span></p></div>
-    <div class="card"><h3>📌 価格の見方</h3><p>2026/8/28時点の相場目安。リオはBooking.comで実価格を確認中（12/18-1/8・大人2・子2）。</p></div>
-  </div>
-</section>
-
-<section>
-  <h2><span class="no">5</span> リオで絶対行きたい3つ</h2>
-  <div class="grid g3">
-    <div class="card"><h3>🌊 日常の幸福</h3><p>レメ→アルポドールの海沿い遊歩道。毎日ここで「住んでる」気分。</p></div>
-    <div class="card"><h3>🚠 特別な旅の記憶</h3><p>シュガーローフのロープウェイ。家族で絶景、6歳も大喜び間違いなし。</p></div>
-    <div class="card"><h3>🏰 家族で遠出</h3><p>ペトロポリス（車1h）。皇帝の夏の宮殿+チョコレート工房。</p></div>
+    <div class="card"><h3>リオ・レメ ⭐おすすめ</h3><p class="big">1泊1.5〜2.5万円目安</p><p>静か×安全×海まで2分。アルポドールの夕日まで徒歩10分。<span class="tag t-green">要確認</span></p></div>
+    <div class="card"><h3>リオ・イパネマ/ウルカ</h3><p class="big">1泊1.3〜2.8万円目安</p><p>イパネマ=最も住みたい。ウルカ=波なしビーチで1歳児に最適。<span class="tag t-green">要確認</span></p></div>
+    <div class="card"><h3>クスコ/聖谷</h3><p class="big">要調査</p><p>聖谷(ウルバンバ/オリャンタイタンボ)の2BRは標高も低く子連れ◎。数ヶ月前に要予約。<span class="tag t-green">次回調査</span></p></div>
+    <div class="card"><h3>メキシコシティ/オアハカ</h3><p class="big">要調査</p><p>ポランコ/ローマ地区(CDMX)・オアハカ中心部。食の都での暮らし。<span class="tag t-green">次回調査</span></p></div>
+    <div class="card"><h3>📌 価格の見方</h3><p>2026/8/28時点の相場目安。リオはBooking.comで実価格確認中。マチュピチュ・ウユニ・メキシコは次回から宿ハンター開始。</p></div>
   </div>
 </section>
 
 <section>
   <h2><span class="no">6</span> 最近の決定</h2>
   <div class="card">
-    <div class="log"><div class="d">2026/8/28 🎉</div><p><b>エル・チャルテンの宿を予約（Airbnb・¥72,555/5泊）</b>。パタゴニアの大自然・フィッツロイを優先。旅程を再構成（BA10日→ウルグアイ4日短縮案→エル・カラファテ4日→エル・チャルテン5日→ウシュアイア11日）。</p></div>
-    <div class="log"><div class="d">2026/8/28</div><p>ルートは<b>案B「陽の国」93点</b>に決定 → パタゴニア（案Cの自然）が加わり進化。</p></div>
-    <div class="log"><div class="d">2026/8/28</div><p>世界一周券は<b>東回りでぐるっと一周</b>（東京→北米→南米→欧州→東京）。</p></div>
+    <div class="log"><div class="d">2026/8/28 💗</div><p><b>奥さんの希望5つを全反映</b>：メキシコ・ウユニ塩湖・マチュピチュ・フィッツロイ・モレノ氷河。旅程は約75日（全72泊）に拡大。ウルグアイは妻の希望優先で削除。</p></div>
+    <div class="log"><div class="d">2026/8/28 🎉</div><p><b>エル・チャルテンの宿を予約（Airbnb・¥72,555/5泊）</b>。フィッツロイの麓で5泊。</p></div>
+    <div class="log"><div class="d">2026/8/28</div><p>ルートは案B「陽の国」93点から進化。海辺+都市+<b>アンデス+メキシコ</b>の融合ルートに。</p></div>
   </div>
 </section>
 
@@ -155,16 +170,16 @@
   <div class="kpi">
     <div class="card"><div class="num">500万</div><p>2026年12月までに作る粗利</p></div>
     <div class="card"><div class="num">3.5ヶ月</div><p>残り期間（今日から）</p></div>
-    <div class="card"><div class="num">1軒目</div><p>予約された未来・エル・チャルテン</p></div>
+    <div class="card"><div class="num">5/5</div><p>奥さんの希望・全反映</p></div>
   </div>
   <div class="goalbox" style="margin-top:14px">
-    <div class="q">「この60日間を実現するために、今日ビジネスで何を一つ進めますか？」</div>
-    <p>1軒目の宿が予約された。残るは今日の1アクションの積み重ねだけ。</p>
+    <div class="q">「この75日間を実現するために、今日ビジネスで何を一つ進めますか？」</div>
+    <p>奥さんの笑顔のリストが、5つ全部ここにある。残るは今日の1アクションの積み重ねだけ。</p>
   </div>
 </section>
 
 <footer>
-  金原家 南米60日ライフデザイン ｜ 更新: 2026/8/28（エル・チャルテン確定反映） ｜ 各セッション後に更新されます
+  金原家 南米60日ライフデザイン ｜ 更新: 2026/8/28（奥さんの希望5つ全反映） ｜ 各セッション後に更新されます
 </footer>
 
 </div>
@@ -175,34 +190,37 @@ const tiles = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/
 const labels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {attribution:'Esri', maxZoom:12});
 
 const stays = [
-  {n:1,name:'リオデジャネイロ',days:'21日',pos:[-22.9068,-43.1729],note:'海辺生活・世界一美しい都市'},
-  {n:2,name:'ブエノスアイレス',days:'10日',pos:[-34.6037,-58.3816],note:'牛肉とワイン・タンゴ'},
-  {n:3,name:'モンテビデオ/プンタ',days:'4日(短縮案)',pos:[-34.9011,-56.1645],note:'短縮 or 削除 確認中'},
-  {n:4,name:'エル・カラファテ',days:'4日',pos:[-50.3376,-72.2639],note:'ペリト・モレノ氷河'},
-  {n:5,name:'エル・チャルテン',days:'5泊🎉',pos:[-49.3305,-72.8867],note:'フィッツロイ・Airbnb予約済み'},
-  {n:6,name:'ウシュアイア',days:'11日',pos:[-54.8019,-68.3030],note:'南極の入り口・ペンギン島'}
+  {n:1,name:'リオデジャネイロ',days:'14日',pos:[-22.9068,-43.1729],note:'海辺生活・世界一美しい都市'},
+  {n:2,name:'イグアスの滝',days:'3日',pos:[-25.6953,-54.4367],note:'世界三大瀑布'},
+  {n:3,name:'ブエノスアイレス',days:'10日',pos:[-34.6037,-58.3816],note:'牛肉とワイン・タンゴ'},
+  {n:4,name:'ウシュアイア',days:'8日',pos:[-54.8019,-68.3030],note:'南極の入り口・ペンギン島'},
+  {n:5,name:'エル・カラファテ',days:'4日',pos:[-50.3376,-72.2639],note:'💗ペリト・モレノ氷河'},
+  {n:6,name:'エル・チャルテン',days:'5泊🎉',pos:[-49.3305,-72.8867],note:'💗フィッツロイ・Airbnb予約済み'},
+  {n:7,name:'リマ',days:'4日',pos:[-12.0464,-77.0428],note:'世界一の美食・セビーチェ'},
+  {n:8,name:'クスコ/マチュピチュ',days:'9日',pos:[-13.5319,-71.9675],note:'💗マチュピチュ・高度順応設計'},
+  {n:9,name:'ラパス/ウユニ',days:'6日',pos:[-16.4897,-68.1193],note:'💗ウユニ塩湖・2月=鏡張り'},
+  {n:10,name:'メキシコ',days:'9日',pos:[19.4326,-99.1332],note:'💗CDMX+テオティワカン+オアハカ'}
 ];
-const saLine = [[-22.9068,-43.1729],[-34.6037,-58.3816],[-34.9011,-56.1645],[-34.9496,-54.9478],[-34.6037,-58.3816],[-50.3376,-72.2639],[-49.3305,-72.8867],[-54.8019,-68.3030]];
+const saLine = [[-22.9068,-43.1729],[-25.6953,-54.4367],[-34.6037,-58.3816],[-54.8019,-68.3030],[-50.3376,-72.2639],[-49.3305,-72.8867],[-12.0464,-77.0428],[-13.5319,-71.9675],[-16.4897,-68.1193]];
 
 // --- 世界一周マップ ---
-const mw = L.map('mapWorld', {zoomControl:true}).setView([12,-30],2);
+const mw = L.map('mapWorld', {zoomControl:true}).setView([8,-45],2);
 tiles.addTo(mw); labels.addTo(mw);
 const L1 = {color:'#94a3b8', weight:3, opacity:0.85, dashArray:'6 10'};
 L.polyline([[35.6762,139.6503],[34.9896,180]], L1).addTo(mw);
 L.polyline([[34.9896,-180],[33.9416,-118.4085],[-22.9068,-43.1729]], L1).addTo(mw);
 L.polyline(saLine, {color:'#34d399', weight:4, opacity:0.95}).addTo(mw);
-L.polyline([[-54.8019,-68.3030],[-34.6037,-58.3816]], L1).addTo(mw);
-L.polyline([[-34.6037,-58.3816],[40.4168,-3.7038]], L1).addTo(mw);
-L.polyline([[40.4168,-3.7038],[35.6762,139.6503]], L1).addTo(mw);
+L.polyline([[-16.4897,-68.1193],[19.4326,-99.1332]], L1).addTo(mw);
+L.polyline([[19.4326,-99.1332],[33.9416,-118.4085],[35.6762,139.6503]], L1).addTo(mw);
 stays.forEach(s=>{
-  const ic = L.divIcon({className:'', html:`<div class="num-marker ${s.n===5?'gold':''}">${s.n}</div>`, iconSize:[26,26], iconAnchor:[13,13]});
+  const cls = s.n===6?'gold':(s.n>=5?'pink':'');
+  const ic = L.divIcon({className:'', html:`<div class="num-marker ${cls}">${s.n}</div>`, iconSize:[26,26], iconAnchor:[13,13]});
   L.marker(s.pos,{icon:ic}).addTo(mw).bindPopup(`<b>${s.name}</b><br>滞在 ${s.days}<br>${s.note}`);
 });
 const hi = L.divIcon({className:'', html:'<div class="home-marker">🇯🇵</div>', iconSize:[34,34], iconAnchor:[17,17]});
-L.marker([35.6762,139.6503],{icon:hi}).addTo(mw).bindPopup('<b>東京</b><br>12/16出国 → 2/15頃帰国');
+L.marker([35.6762,139.6503],{icon:hi}).addTo(mw).bindPopup('<b>東京</b><br>12/16出国 → 3月初旬帰国');
 const hii = L.divIcon({className:'', html:'<div class="hint-marker">✈</div>', iconSize:[22,22], iconAnchor:[11,11]});
-L.marker([33.9416,-118.4085],{icon:hii}).addTo(mw).bindPopup('経由: LAX(サンプル)');
-L.marker([40.4168,-3.7038],{icon:hii}).addTo(mw).bindPopup('帰路オプション: 欧州1-2泊(要確認)');
+L.marker([33.9416,-118.4085],{icon:hii}).addTo(mw).bindPopup('経由: LAX');
 
 // --- 南米クローズアップ ---
 const ms = L.map('mapSA', {zoomControl:true}).setView([-25,-60],4);
@@ -210,7 +228,8 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {attribution:'Esri', maxZoom:14}).addTo(ms);
 L.polyline(saLine, {color:'#34d399', weight:5, opacity:0.95}).addTo(ms);
 stays.forEach(s=>{
-  const ic = L.divIcon({className:'', html:`<div class="num-marker ${s.n===5?'gold':''}">${s.n}</div>`, iconSize:[30,30], iconAnchor:[15,15]});
+  const cls = s.n===6?'gold':(s.n>=5?'pink':'');
+  const ic = L.divIcon({className:'', html:`<div class="num-marker ${cls}">${s.n}</div>`, iconSize:[30,30], iconAnchor:[15,15]});
   L.marker(s.pos,{icon:ic}).addTo(ms).bindPopup(`<b>${s.name}</b><br>滞在 ${s.days}<br>${s.note}`);
 });
 ms.fitBounds([[-56,-76],[4,-33]], {padding:[20,20]});
